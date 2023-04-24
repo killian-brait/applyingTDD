@@ -1,5 +1,5 @@
 // constructor for an empty portfolio
-const Portfolio = require('./portfolio.js');
+const { Portfolio, ShareSaleException } = require('./portfolio.js');
 
 describe('Portfolio', () => {
     let portfolio;
@@ -75,19 +75,15 @@ describe('Portfolio', () => {
                 { symbol: 'GOOG', shares: 5 }
             ]);
         });
-        test('2.5 - sell every share in the portfolio', () => {
+        test('2.7 - remove stocks from portfolio by selling all the shares', () => {
             portfolio.sale('AAPL', 10);
             portfolio.sale('GOOG', 5);
-            expect(portfolio.getStocks()).toEqual([
-                { symbol: 'AAPL', shares: 0 },
-                { symbol: 'GOOG', shares: 0 }
-            ]);
+            expect(portfolio.getStocks()).toEqual([]);
         });
-
-        // test('2.8 - raise exception if trying to sell more shares than owned', () => {
-        //     expect(() => {
-        //         portfolio.sellStock('AAPL', 15);
-        //     }).toThrow(ShareSaleException);
-        // });
+        test('2.8 - raise exception if trying to sell more shares than owned', () => {
+            expect(() => {
+                portfolio.sale('AAPL', 15);
+            }).toThrow(ShareSaleException);
+        });
     });
 });

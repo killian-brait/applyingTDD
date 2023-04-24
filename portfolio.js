@@ -1,5 +1,7 @@
 const { existsSync } = require("fs");
 
+class ShareSaleException extends Error {};
+
 class Portfolio {
     constructor() {
       this.stocks = [];
@@ -41,6 +43,9 @@ class Portfolio {
         if (existingStock.shares < shares) {
             throw new ShareSaleException(`Attempting to sell ${shares} shares of ${symbol}, but only ${existingStock.shares} shares owned`);
         }
+        if (existingStock.shares == shares) {
+            this.removeStock(symbol);
+        }
         else {
             existingStock.shares -= shares;
         }
@@ -51,6 +56,7 @@ class Portfolio {
         return existingStock.shares;
     }
 
+    // helper functions - refactoring
     findStock(symbol) {
         const existingStock = this.stocks.find((stock) => stock.symbol === symbol);
         if (!existingStock) {
@@ -58,9 +64,12 @@ class Portfolio {
         }
         return existingStock;
     }
-  }
 
-  class ShareSaleException extends Error {}
+    removeStock(symbol) {
+        this.stocks = this.stocks.filter((stock) => stock.symbol !== symbol);
+    }
+  };
   
-  module.exports = Portfolio;
+  module.exports.Portfolio = Portfolio;
+  module.exports.ShareSaleException = ShareSaleException;
   
