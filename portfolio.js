@@ -27,35 +27,37 @@ class Portfolio {
     }
 
     purchase(symbol, shares) {
-        const existingStock = this.stocks.find((stock) => stock.symbol === symbol);
-        if (existingStock) {
+        try {
+            const existingStock = this.findStock(symbol);
             existingStock.shares += shares;
-        } else {
+        } catch(error) {
+            // push new stock if it can't be found
             this.stocks.push({ symbol, shares });
         }
     }
 
     sale(symbol, shares) {
-        const existingStock = this.stocks.find((stock) => stock.symbol === symbol);
-        if (!existingStock) {
-            throw new Error(`No shares of ${symbol} owned`);
+        const existingStock = this.findStock(symbol);
+        if (existingStock.shares < shares) {
+            throw new ShareSaleException(`Attempting to sell ${shares} shares of ${symbol}, but only ${existingStock.shares} shares owned`);
         }
         else {
-            if (existingStock.shares < shares) {
-                throw new ShareSaleException(`Attempting to sell ${shares} shares of ${symbol}, but only ${existingStock.shares} shares owned`);
-            }
-            else {
-                existingStock.shares -= shares;
-            }
+            existingStock.shares -= shares;
         }
     }
 
-    // removeStock(symbol) {
-    //   const index = this.stocks.findIndex((stock) => stock.symbol === symbol);
-    //   if (index !== -1) {
-    //     this.stocks.splice(index, 1);
-    //   }
-    // }
+    countShares(symbol) {
+        const existingStock = this.findStock(symbol);
+        return existingStock.shares;
+    }
+
+    findStock(symbol) {
+        const existingStock = this.stocks.find((stock) => stock.symbol === symbol);
+        if (!existingStock) {
+            throw new Error(`${symbol} isn't owned in this portfolio`);
+        }
+        return existingStock;
+    }
   }
 
   class ShareSaleException extends Error {}

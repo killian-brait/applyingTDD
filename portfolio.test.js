@@ -23,6 +23,23 @@ describe('Portfolio', () => {
             portfolio.purchase('RBLX', 10);
             expect(portfolio.countTicks()).toEqual(2);
         });
+        describe('utilities w setup', () => {
+            beforeEach(() => {
+                portfolio.purchase('AAPL', 10);
+                portfolio.purchase('GOOG', 5);
+            });
+
+            test('2.6 - count shares for a given symbol', () => {
+                expect(portfolio.countShares('AAPL')).toEqual(10);
+                expect(portfolio.countShares('GOOG')).toEqual(5);
+            });
+            test('2.6 - change counts and recount', () => {
+                portfolio.sale('AAPL', 9);
+                portfolio.sale('GOOG', 3);
+                expect(portfolio.countShares('AAPL')).toEqual(1);
+                expect(portfolio.countShares('GOOG')).toEqual(2);
+            });
+        });
     });
 
     describe('stockPurchase', () => {
@@ -73,30 +90,4 @@ describe('Portfolio', () => {
         //     }).toThrow(ShareSaleException);
         // });
     });
-
-//   describe('removeStock', () => {
-//     beforeEach(() => {
-//       portfolio.addStock('AAPL', 10);
-//       portfolio.addStock('GOOG', 5);
-//     });
-
-//     it('removes a stock from the portfolio', () => {
-//       portfolio.removeStock('AAPL');
-//       expect(portfolio.getStocks()).toEqual([{ symbol: 'GOOG', shares: 5 }]);
-//     });
-
-//     it('removes all shares of a stock from the portfolio', () => {
-//       portfolio.removeStock('AAPL');
-//       portfolio.removeStock('GOOG');
-//       expect(portfolio.getStocks()).toEqual([]);
-//     });
-
-//     it('does nothing if stock is not in the portfolio', () => {
-//       portfolio.removeStock('MSFT');
-//       expect(portfolio.getStocks()).toEqual([
-//         { symbol: 'AAPL', shares: 10 },
-//         { symbol: 'GOOG', shares: 5 },
-//       ]);
-//     });
-//   });
 });
